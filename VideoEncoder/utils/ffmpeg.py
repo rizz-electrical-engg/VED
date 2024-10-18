@@ -187,7 +187,7 @@ async def encode(filepath, message, msg):
     # Metadata Watermark
     m = await db.get_metadata_w(message.from_user.id)
     if m:
-        metadata = '-metadata title=Weeb-Zone.Blogspot.com -metadata:s:v title=Weeb-Zone.Blogspot.com -metadata:s:a title=Weeb-Zone.Blogspot.com'
+        metadata = '-metadata title=TG@aboutRizzx -metadata:s:v title=TG@aboutRizzx -metadata:s:a title=TG@aboutRizzx'
     else:
         metadata = ''
 
@@ -207,13 +207,13 @@ async def encode(filepath, message, msg):
             subtitles = ''
 
 
-#    ffmpeg_filter = ':'.join([
-#        'drawtext=fontfile=/app/bot/utils/watermark/font.ttf',
-#        f"text='Weeb-Zone.Blogspot.com'",
-#        f'fontcolor=white',
-#        'fontsize=main_h/20',
-#        f'x=40:y=40'
-#    ])
+    ffmpeg_filter = ':'.join([
+        'drawtext=fontfile=/app/bot/utils/watermark/font.ttf',
+        f"text='TG@aboutRizzx'",
+        f'fontcolor=white',
+        'fontsize=main_h/20',
+        f'x=10:y=10'
+    ])
 
     # Watermark and Resolution
     r = await db.get_resolution(message.from_user.id)
