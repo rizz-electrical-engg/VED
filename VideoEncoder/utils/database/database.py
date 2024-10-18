@@ -295,4 +295,6 @@ class Database:
 
     async def get_custom_watermark(self, user_id):
         user = await self.col.find_one({'id': user_id})
+        if user is None:
+            return None
         return user.get('custom_watermark', None)

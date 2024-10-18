@@ -9,7 +9,7 @@ from ..utils.tasks import handle_tasks
 
 # Retrieve the database URI and name from environment variables or configuration
 DATABASE_URI = os.getenv('DATABASE_URI', 'mongodb+srv://dhimanrajat:Y8IAGI0lVrMhjvkU@cluster0.mytkgu6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-DATABASE_NAME = os.getenv('DATABASE_NAME', 'encoderbo')
+DATABASE_NAME = os.getenv('DATABASE_NAME', 'encoderbot')
 
 db = Database(DATABASE_URI, DATABASE_NAME)
 
@@ -26,6 +26,8 @@ async def encode_video(app, message):
     if len(data) == 1:
         user_id = message.from_user.id
         custom_watermark = await db.get_custom_watermark(user_id)
+        if custom_watermark is None:
+            custom_watermark = "Default Watermark"  # or handle it as needed
         await handle_tasks(message, 'tg', custom_watermark)
     else:
         await message.reply("📔 Waiting for queue...")
