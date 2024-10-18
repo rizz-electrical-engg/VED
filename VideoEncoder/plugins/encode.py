@@ -1,30 +1,17 @@
-# VideoEncoder - a telegram bot for compressing/encoding videos in h264/h265 format.
-# Copyright (c) 2021 WeebTime/VideoEncoder
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 import asyncio
-
+import os
 from pyrogram import Client, filters
-
 from .. import data, video_mimetype
 from ..utils.database.add_user import AddUserToDatabase
 from ..utils.database.database import Database
 from ..utils.helper import check_chat
 from ..utils.tasks import handle_tasks
 
-db = Database()
+# Retrieve the database URI and name from environment variables or configuration
+DATABASE_URI = os.getenv('DATABASE_URI', 'mongodb+srv://dhimanrajat:Y8IAGI0lVrMhjvkU@cluster0.mytkgu6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+DATABASE_NAME = os.getenv('DATABASE_NAME', 'encoderbo')
+
+db = Database(DATABASE_URI, DATABASE_NAME)
 
 @Client.on_message(filters.incoming & (filters.video | filters.document))
 async def encode_video(app, message):
@@ -44,7 +31,6 @@ async def encode_video(app, message):
         await message.reply("📔 Waiting for queue...")
     await asyncio.sleep(1)
 
-
 @Client.on_message(filters.command('ddl'))
 async def url_encode(app, message):
     c = await check_chat(message, chat='Both')
@@ -61,7 +47,6 @@ async def url_encode(app, message):
     else:
         await message.reply("📔 Waiting for queue...")
     await asyncio.sleep(1)
-
 
 @Client.on_message(filters.command('batch'))
 async def batch_encode(app, message):
