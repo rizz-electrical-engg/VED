@@ -20,9 +20,11 @@ from pyrogram import Client, filters
 
 from .. import data, video_mimetype
 from ..utils.database.add_user import AddUserToDatabase
+from ..utils.database.database import Database
 from ..utils.helper import check_chat
 from ..utils.tasks import handle_tasks
 
+db = Database()
 
 @Client.on_message(filters.incoming & (filters.video | filters.document))
 async def encode_video(app, message):
@@ -35,7 +37,9 @@ async def encode_video(app, message):
             return
     data.append(message)
     if len(data) == 1:
-        await handle_tasks(message, 'tg')
+        user_id = message.from_user.id
+        custom_watermark = await db.get_custom_watermark(user_id)
+        await handle_tasks(message, 'tg', custom_watermark)
     else:
         await message.reply("📔 Waiting for queue...")
     await asyncio.sleep(1)

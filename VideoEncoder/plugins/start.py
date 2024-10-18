@@ -218,3 +218,10 @@ async def update_message(app, message):
         await app.stop()
     finally:
         srun([f"bash run.sh"], shell=True)
+
+@Client.on_message(filters.command('set_watermark'))
+async def set_watermark(app, message):
+    user_id = message.from_user.id
+    watermark = message.text.split(' ', 1)[1]
+    await db.set_custom_watermark(user_id, watermark)
+    await message.reply("Watermark set successfully!")

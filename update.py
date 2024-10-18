@@ -23,7 +23,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 
 UPSTREAM_REPO = 'https://github.com/rizz-electrical-engg/VED.git'
-UPSTREAM_BRANCH = 'main'
+UPSTREAM_BRANCH = 'SET'
 
 if UPSTREAM_REPO is not None:
     if ospath.exists('.git'):

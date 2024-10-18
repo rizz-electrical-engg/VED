@@ -21,6 +21,7 @@ import time
 from datetime import datetime
 from urllib.parse import unquote_plus
 
+import ffmpeg
 from httpx import delete
 from pyrogram.errors.exceptions.bad_request_400 import (MessageIdInvalid,
                                                         MessageNotModified)
@@ -33,7 +34,7 @@ from ..plugins.start import delete_downloads
 from .database.access_db import db
 from .direct_link_generator import direct_link_generator
 from .display_progress import progress_for_pyrogram
-from .helper import get_zip_folder, handle_encode, handle_extract, handle_url
+from .helper import get_zip_folder, handle_extract, handle_url
 from .uploads.drive import _get_file_id
 from .uploads.drive.download import Downloader
 
@@ -59,15 +60,15 @@ async def on_task_complete():
         await handle_tasks(message, 'tg')
 
 
-async def handle_tasks(message, mode):
+async def handle_tasks(message, mode, custom_watermark=None):
     try:
         msg = await message.reply_text("<b>💠 Downloading...</b>")
         if mode == 'tg':
-            await tg_task(message, msg)
+            await tg_task(message, msg, custom_watermark)
         elif mode == 'url':
-            await url_task(message, msg)
+            await url_task(message, msg, custom_watermark)
         else:
-            await batch_task(message, msg)
+            await batch_task(message, msg, custom_watermark)
     except MessageNotModified:
         pass
     except IndexError:
@@ -82,19 +83,19 @@ async def handle_tasks(message, mode):
         await on_task_complete()
 
 
-async def tg_task(message, msg):
+async def tg_task(message, msg, custom_watermark=None):
     filepath = await handle_tg_down(message, msg)
     await msg.edit('Encoding...')
-    await handle_encode(filepath, message, msg)
+    await handle_encode(filepath, message, msg, custom_watermark)
 
 
-async def url_task(message, msg):
+async def url_task(message, msg, custom_watermark=None):
     filepath = await handle_download_url(message, msg, False)
     await msg.edit_text("Encoding...")
-    await handle_encode(filepath, message, msg)
+    await handle_encode(filepath, message, msg, custom_watermark)
 
 
-async def batch_task(message, msg):
+async def batch_task(message, msg, custom_watermark=None):
     if message.reply_to_message:
         filepath = await handle_tg_down(message, msg, mode='reply')
     else:
@@ -122,7 +123,7 @@ async def batch_task(message, msg):
             filepath = os.path.join(dirpath, i)
             await msg.edit('Encode Started!\nEncoding: <code>{}</code>'.format(i))
             try:
-                url = await handle_encode(filepath, message, msg_)
+                url = await handle_encode(filepath, message, msg_, custom_watermark)
             except Exception as e:
                 await msg_.edit(str(e) + '\n\n Continuing...')
                 continue
@@ -155,6 +156,16 @@ async def batch_task(message, msg):
     if first_index is None:
         first_index = thing
     await msg.edit('Encoded Files! Links: {}'.format(first_index.link), disable_web_page_preview=True)
+
+
+async def handle_encode(filepath, message, msg, custom_watermark=None):
+    output_file = "output.mp4"
+    if custom_watermark:
+        ffmpeg.input(filepath).output(output_file, vf=f"drawtext=text='{custom_watermark}':x=10:y=10").run()
+    else:
+        ffmpeg.input(filepath).output(output_file).run()
+    await msg.edit('Uploading...')
+    await upload_video(message, msg, output_file)
 
 
 async def handle_download_url(message, msg, batch):

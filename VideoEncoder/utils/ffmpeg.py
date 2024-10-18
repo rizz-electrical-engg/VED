@@ -207,13 +207,13 @@ async def encode(filepath, message, msg):
             subtitles = ''
 
 
-#    ffmpeg_filter = ':'.join([
-#        'drawtext=fontfile=/app/bot/utils/watermark/font.ttf',
-#        f"text='Weeb-Zone.Blogspot.com'",
-#        f'fontcolor=white',
-#        'fontsize=main_h/20',
-#        f'x=40:y=40'
-#    ])
+    ffmpeg_filter = ':'.join([
+        'drawtext=fontfile=/app/bot/utils/watermark/font.ttf',
+        f"text='@aboutRizzx'",
+        f'fontcolor=white',
+        'fontsize=main_h/20',
+        f'x=40:y=40'
+    ])
 
     # Watermark and Resolution
     r = await db.get_resolution(message.from_user.id)

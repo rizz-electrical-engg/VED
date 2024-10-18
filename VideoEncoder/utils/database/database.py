@@ -289,3 +289,10 @@ class Database:
 
     async def set_sudo(self, sudo):
         await self.col2.update_one({'id': 'sudo'}, {'$set': {'sudo_': sudo}})
+
+    async def set_custom_watermark(self, user_id, watermark):
+        await self.col.update_one({'id': user_id}, {'$set': {'custom_watermark': watermark}})
+
+    async def get_custom_watermark(self, user_id):
+        user = await self.col.find_one({'id': user_id})
+        return user.get('custom_watermark', None)
