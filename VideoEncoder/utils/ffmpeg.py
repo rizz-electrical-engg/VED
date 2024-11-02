@@ -187,7 +187,7 @@ async def encode(filepath, message, msg):
     # Metadata Watermark
     m = await db.get_metadata_w(message.from_user.id)
     if m:
-        metadata = '-metadata title=TG@aboutRizzx -metadata:s:v title=TG@aboutRizzx -metadata:s:a title=TG@aboutRizzx'
+        metadata = '-metadata title=TG@aboutRizzx -metadata:s:v title=TG:AnimeOrbits -metadata:s:a title=AnimeOrbit'
     else:
         metadata = ''
 
@@ -209,7 +209,7 @@ async def encode(filepath, message, msg):
 
     ffmpeg_filter = ':'.join([
         'drawtext=fontfile=/app/bot/utils/watermark/font.ttf',
-        f"text='TG@aboutRizzx'",
+        f"text='Anime Orbit'",
         f'fontcolor=white',
         'fontsize=main_h/20',
         f'x=10:y=10'
