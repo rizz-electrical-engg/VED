@@ -3,4 +3,4 @@ build:
     web: Dockerfile
 
 run:
-  web: python3 bot.py  # Replace 'bot.py' with your main bot script if it's named differently
+  web: python3 -m VideoEncoder
